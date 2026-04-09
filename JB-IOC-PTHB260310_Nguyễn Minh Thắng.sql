@@ -208,7 +208,7 @@ begin
 	values
 	(p_customer_id, p_customer_full_name, p_customer_email, p_customer_phone, p_customer_address);
 end; $$; 
---(5 điểm) Hãy tạo một Stored Procedure có tên là add_payment để thực hiện việc thêm một thanh toán mới cho một lần đặt phòng.
+20--(5 điểm) Hãy tạo một Stored Procedure có tên là add_payment để thực hiện việc thêm một thanh toán mới cho một lần đặt phòng.
 /*
 Procedure này nhận các tham số đầu vào:
 • p_booking_id: Mã đặt phòng (booking_id).
