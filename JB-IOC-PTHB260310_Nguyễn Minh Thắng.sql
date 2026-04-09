@@ -6,7 +6,6 @@ create table Customer(
 	customer_phone varchar(15) not null,
 	customer_address varchar(255) not null
 );
-
 create table Room(
 	room_id varchar(5) not null primary key,
 	room_type varchar(50) not null,
@@ -14,7 +13,6 @@ create table Room(
 	room_status varchar(20) not null,
 	room_area int not null
 );
-
 create table Booking(
 	booking_id serial not null primary key,
 	customer_id varchar(5) not null references Customer(customer_id),
@@ -24,7 +22,6 @@ create table Booking(
 	total_amount decimal(10,2) 
 	
 );
-
 create table Payment(
 	payment_id serial not null primary key,
 	booking_id int not null references Booking(booking_id),
@@ -32,9 +29,7 @@ create table Payment(
 	payment_date date not null,
 	payment_amount decimal(10,2) not null
 );
-
 --2. Chèn dữ liệu (8 điểm) Thêm dữ liệu vào 4 bảng đã tạo:
-
 truncate table Customer restart identity cascade
 --insert Customer
 insert into Customer(customer_id,customer_full_name,customer_email,customer_phone,customer_address) values
@@ -45,7 +40,6 @@ insert into Customer(customer_id,customer_full_name,customer_email,customer_phon
 ('C005','Vu Minh Thu','thu.vu@example.com','0956789012','Hai Phong, Vietnam');
 
 select * from customer
-
 --insert Room
 insert into Room(room_id,room_type,room_price,room_status,room_area) values
 ('R001','Single',100.0,'Available',25),
@@ -73,36 +67,28 @@ insert into Payment(booking_id,payment_method,payment_date,payment_amount) value
 (5,'Credit Card','2025-03-09',800.0);
 
 select * from Payment
-
-
 /*
 3. Cập nhật dữ liệu (6 điểm) Viết câu lệnh UPDATE để cập nhật lại total_amount trong bảng Booking theo công thức: total_amount = room_price * (số ngày lưu trú).
 Điều kiện:
 Chỉ cập nhật cho các phòng có trạng thái ( room_status ) là "Booked".
 Chỉ cập nhật khi ngày nhận phòng ( check_in_date ) đã qua (ví dụ: check_in_date< CURRENT_DATE ).
 */
-
 update booking b
 set total_amount=r.room_price*(b.check_out_date - b.check_in_date)
 from room r
 where b.room_id=r.room_id and room_status = 'Booked' and check_in_date<current_Date
 
-
 select * from booking
-
 --4. Xóa dữ liệu (6 điểm) Viết câu lệnh DELETE để xóa các thanh toán trong bảng Paymentnếu:
 --Phương thức thanh toán ( payment_method ) là "Cash".
 --Và tổng tiền thanh toán ( payment_amount ) nhỏ hơn 500.
 delete from payment where payment_method='Cash' and payment_amount<500
 
-
 --PHẦN 2: Truy vấn dữ liệu
-
 --5. (3 điểm) Lấy thông tin khách hàng gồm mã khách hàng, họ tên, email, số điện thoại và địa chỉ được sắp xếp theo họ tên khách hàng tăng dần.
 select customer_id, customer_full_name, customer_email, customer_phone, customer_address
 from Customer
 order by customer_full_name asc
-
 
 --6. (3 điểm) Lấy thông tin các phòng khách sạn gồm mã phòng, loại phòng, giá phòng và diện tích phòng, sắp xếp theo giá phòng giảm dần.
 select room_id,room_type,room_price,room_area
@@ -113,7 +99,6 @@ order by room_price desc;
 select c.customer_id, c.customer_full_name, r.room_id, b.check_in_date, b.check_out_date
 from customer c join booking b on c.customer_id=b.customer_id
 join room r on r.room_id=b.room_id
-
 
 --8. (3 điểm) Lấy danh sách khách hàng và tổng tiền đã thanh toán khi đặt phòng, gồm mã khách hàng, họ tên khách hàng, phương thức thanh toán và số tiền thanh toán, sắp xếp theo số tiền thanh toán giảm dần.
 select c.customer_id, c.customer_full_name, p.payment_method, sum(p.payment_amount) as "total_paid"
@@ -144,10 +129,7 @@ join room r on r.room_id=b.room_id
 group by r.room_id, r.room_type, r.room_price
 having sum(p.payment_amount)<1000 and count(distinct b.customer_id) >= 3
 
-
-
 --12. (5 điểm) Lấy danh sách các khách hàng có tổng số tiền thanh toán lớn hơn 1000, gồm mã khách hàng, họ tên khách hàng, mã phòng, tổng số tiền thanh toán.
-
 select c.customer_id, c.customer_full_name, r.room_id, sum(b.total_amount)
 from Customer c 
 join booking b on c.customer_id=b.customer_id
@@ -156,22 +138,18 @@ group by c.customer_id, r.room_id, b.total_amount
 having sum(b.total_amount)>1000
 
 --13. (6 điểm) Lấy danh sách các khách hàng Mmã KH, Họ tên, Email, SĐT) có họ tên chứa chữ "Minh" hoặc địa chỉ (address) ở "Hanoi". Sắp xếp kết quả theo họ tên tăng dần.
-
 select c.customer_id, c.customer_full_name, c.customer_email, c.customer_phone
 from customer c
 where c.customer_Address like '%Hanoi%' or c.customer_full_name like '%Minh%'
 
 --14. (4 điểm) Lấy danh sách tất cả các phòng (Mã phòng, Loại phòng, Giá), sắp xếp theo giá phòng giảm dần. Hiển thị 5 phòng tiếp theo sau 5 phòng đầu tiên (tức là lấy kết quả của trang thứ 2, biết mỗi trang có 5 phòng).
-
 select room_id, room_type, room_price
 from room
 order by room_price desc
 offset 5 limit 5
 
-
---PHẦN 3: Tạo View
+	--PHẦN 3: Tạo View
 --15. (5 điểm) Hãy tạo một view để lấy thông tin các phòng và khách hàng đã đặt, với điều kiện ngày nhận phòng nhỏ hơn ngày 2025-03-10. Cần hiển thị các thông tin sau: Mã phòng, Loại phòng, Mã khách hàng, họ tên khách hàng
-
 create view v_booked as
 select r.room_id, r.room_type, c.customer_id, c.customer_full_name
 from customer c join booking b on c.customer_id=b.customer_id
@@ -179,9 +157,6 @@ join room r on b.room_id=r.room_id
 where b.check_in_date < '2025-03-10'
 
 select * from v_booked
-
-
-
 --16. (5 điểm) Hãy tạo một view để lấy thông tin khách hàng và phòng đã đặt, với điều kiện diện tích phòng lớn hơn 30 m². Cần hiển thị các thông tin sau: Mã khách hàng, Họ tên kháchhàng, Mã phòng, Diện tích phòng
 create view v_booked_2 as
 select c.customer_id, c.customer_full_name, r.room_id, r.room_area
@@ -190,13 +165,8 @@ join room r on b.room_id=r.room_id
 where r.room_area > 30
 
 select * from v_booked_2
-
-
-
-
 --PHẦN 4: Tạo Trigger
 --17. (5 điểm) Hãy tạo một trigger check_insert_booking để kiểm tra dữ liệu mối khi chèn vào bảng Booking. Kiểm tra nếu ngày đặt phòng mà sau ngày trả phòng thì thông báo lỗi với nộidung “Ngày đặt phòng không thể sau ngày trả phòng được !” và hủy thao tác chèn dữ liệu vào bảng.
-
 create or replace function f_check_insert_booking()
 returns trigger as $$
 begin 
@@ -206,13 +176,10 @@ begin
 	return null;
 end; $$ language plpgsql;
 
-
 create or replace trigger check_insert_booking
 before insert on booking
 for each row
 execute function f_check_insert_booking();
-
-
 --18. (5 điểm) Hãy tạo một trigger có tên là update_room_status_on_booking để tự động cập nhật trạng thái phòng thành "Booked" khi một phòng được đặt (khi có bản ghi được INSERTvào bảng Booking).
 create or replace function f_update_room_status_on_booking()
 returns trigger as $$
@@ -226,12 +193,8 @@ create or replace trigger update_room_status_on_booking
 after insert on booking 
 for each row
 execute function f_update_room_status_on_booking()
-
-
-
 --PHẦN 5: Tạo Store Procedure
 --19. (5 điểm) Viết store procedure có tên add_customer để thêm mới một khách hàng với đầy đủ các thông tin cần thiết.
-
 create or replace procedure add_customer(
 	p_customer_id varchar(5),
 	p_customer_full_name varchar(100),
@@ -245,8 +208,6 @@ begin
 	values
 	(p_customer_id, p_customer_full_name, p_customer_email, p_customer_phone, p_customer_address);
 end; $$; 
-
-
 --(5 điểm) Hãy tạo một Stored Procedure có tên là add_payment để thực hiện việc thêm một thanh toán mới cho một lần đặt phòng.
 /*
 Procedure này nhận các tham số đầu vào:
